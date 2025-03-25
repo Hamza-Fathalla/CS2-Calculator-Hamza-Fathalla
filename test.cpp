@@ -1,28 +1,35 @@
 #include <iostream>
 #include "calculator.h"
-using namespace std;
+
 int main() {
 
-    int a = 10, b = 5;
-    cout << "Addition: " << add(a, b) << endl;
+    cout << "Addition: 3 + 4 = " << add(3, 4) << endl;
+    cout << "Subtraction: 10 - 2 = " << subtract(10, 2) << endl;
+    cout << "Multiplication: 3 * 7 = " << multiply(3, 7) << endl;
+    cout << "Division: 10 / 2 = " << divide(10, 2) << endl;
 
-    cout << "Subtraction: " << subtract(a, b) << endl;
+   cout << "Division by zero: 10 / 0 = " << divide(10, 0) << endl;
 
-    cout << "Multiplication: " << multiply(a, b) << endl;
+    int num = 5;
+    cout << "Factorial of " << num << " = " << factorial(num) << endl;
 
-    cout << "Division: " << divide(a, b) << endl;
-    cout << "Division by Zero: " << divide(a, 0) << endl;
+    int a = 56, b = 98;
+    cout << "GCD of " << a << " and " << b << " = " << gcd(a, b) << endl;
 
-    int n = 5;
-    cout << "Factorial of " << n << ": " << factorial(n) << endl;
+    cout << "LCM of " << a << " and " << b << " = " << lcm(a, b) << endl;
+
+    cout << "Random number between 1 and 10: " << generateRandomNumber(1, 10) << endl;
+
     
-    int num1 = 48, num2 = 18;
-    cout << "GCD of " << num1 << " and " << num2 << ": " << gcd(num1, num2) << endl;
+    string expression1 = "3 + 4 * (2 - 1) / 5";
+    cout << "Result: " << expression1 << "' = " << evaluateExpression(expression1) << endl;
 
-    cout << "LCM of " << num1 << " and " << num2 << ": " << lcm(num1, num2) << endl;
+    string expression2 = "(3 + 5) * (2 - 1)";
+    cout << "Result: " << expression2 << "' = " << evaluateExpression(expression2) << endl;
 
-    int min = 1, max = 100;
-    cout << "Random number between " << min << " and " << max << ": " << random_number(min, max) << endl;
+    string expression3 = "3 + 4 * 2 / (1 - 5) ^ 2 ^ 3";
+    cout << "Result: " << expression3 << "' = " << evaluateExpression(expression3) << endl;
 
     return 0;
 }
+

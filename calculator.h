@@ -1,13 +1,19 @@
+
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
-int add(int a, int b);
-int subtract(int a, int b);
-int multiply(int a, int b);
-double divide(int a, int b);
-int factorial(int n);
+#include <string>
+using namespace std;
+
+double add(double a, double b);
+double subtract(double a, double b);
+double multiply(double a, double b);
+double divide(double a, double b);
+long long factorial(int n);
 int gcd(int a, int b);
 int lcm(int a, int b);
-int random_number(int min, int max);
+int generateRandomNumber(int min, int max);
+
+double evaluateExpression(const string& expression);
 
 #endif
