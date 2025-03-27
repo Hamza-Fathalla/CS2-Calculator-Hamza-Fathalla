@@ -3,17 +3,27 @@
 #define CALCULATOR_H
 
 #include <string>
+#include <stack>
+
 using namespace std;
 
-double add(double a, double b);
-double subtract(double a, double b);
-double multiply(double a, double b);
-double divide(double a, double b);
-long long factorial(int n);
-int gcd(int a, int b);
-int lcm(int a, int b);
-int generateRandomNumber(int min, int max);
+class Calculator {
+public:
+    Calculator() {}
+    double add(double a, double b);
+    double subtract(double a, double b);
+    double multiply(double a, double b);
+    double divide(double a, double b);
+    int factorial(int n);
+    int gcd(int a, int b);
+    int lcm(int a, int b);
+    int generateRandom(int min, int max);
+    double evaluateExpression(const string& expr);
 
-double evaluateExpression(const string& expression);
+private:
+    int operatorType(char op);
+    double applyOperation(double a, double b, char op);
+    double applyFunction(const string& func, double val);
+};
 
 #endif

@@ -1,137 +1,82 @@
 #include "calculator.h"
-#include <iostream>
-#include <sstream>
-#include <stack>
-#include <cctype>
-#include <cmath>
-#include <unordered_map>
 #include <stdexcept>
+#include <cstdlib>
+#include <cctype>
+#include <sstream>
+#include <iostream>
+#include <cmath>
 
 using namespace std;
 
-double add(double a, double b) {
-    return a + b;
+double Calculator::add(double a, double b) { return a + b; }
+double Calculator::subtract(double a, double b) { return a - b; }
+double Calculator::multiply(double a, double b) { return a * b; }
+double Calculator::divide(double a, double b) {
+    if (b == 0) throw runtime_error("Division by zero");
+    return a / b;
 }
-
-double subtract(double a, double b) {
-    return a - b;
+int Calculator::factorial(int n) {
+    if (n < 0) throw runtime_error("Negative factorial not allowed");
+    return (n == 0) ? 1 : n * factorial(n - 1);
 }
-
-double multiply(double a, double b) {
-    return a * b;
-}
-
-double divide(double a, double b) {
-    if (b == 0) {
-        cout<<"error, cannot divide by 0"<<endl;
-    }
-    return a /(double)b;
-}
-
-long long factorial(int n) {
-    if (n <= 1) return 1;
-    long long result = 1;
-    for (int i = 2; i <= n; ++i) {
-        result *= i;
-    }
-    return result;
-}
-
-int gcd(int a, int b) {
-    while (b != 0) {
-        int temp = b;
-        b = a % b;
-        a = temp;
-    }
-    return a;
-}
-
-int lcm(int a, int b) {
-    return (a * b) / gcd(a, b);
-}
-
-int generateRandomNumber(int min, int max) {
-    return min + rand() % (max - min + 1);
-}
-
-int typeofoperator(char op) {
+int Calculator::gcd(int a, int b) { return (b == 0) ? a : gcd(b, a % b); }
+int Calculator::lcm(int a, int b) { return (a / gcd(a, b)) * b; }
+int Calculator::generateRandom(int min, int max) { return rand() % (max - min + 1) + min; }
+int Calculator::operatorType(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/') return 2;
     return 0;
 }
-
-
-double useoperator(double a, double b, char op) {
+double Calculator::applyOperation(double a, double b, char op) {
     switch (op) {
-        case '+': return add(a, b);
-        case '-': return subtract(a, b);
-        case '*': return multiply(a, b);
-        case '/': return divide(a, b);
-        default: cout<<"Invalid operator"<<endl;
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/':
+            if (b == 0) throw runtime_error("Division by zero");
+            return a / b;
+        default: throw runtime_error("Invalid operator");
     }
 }
 
-double evaluateExpression(const string& expression) {
-    stack<double> values; 
-    stack<char> operators; 
-    unordered_map<char, int> operatortype = {{'+', 1}, {'-', 1}, {'*', 2}, {'/', 2}};
+// Function to evaluate mathematical expressions using the Shunting-Yard Algorithm
+double Calculator::evaluateExpression(const string& expr) {
+    stack<double> values;
+    stack<char> operators;
+    stringstream ss(expr);
+    char token;
 
-    for (size_t i = 0; i < expression.size(); ++i) {
-        char current = expression[i];
-
-        if (isspace(current)) {
-            continue; // Ignore spaces
-        }
-
-        if (isdigit(current) || current == '.') {
-            stringstream ss;
-            ss << current;
-            // Handle multi-digit numbers or decimal numbers
-            while (i + 1 < expression.size() && (isdigit(expression[i + 1]) || expression[i + 1] == '.')) {
-                ss << expression[++i];
-            }
+    while (ss >> token) {
+        if (isdigit(token)) {
+            ss.putback(token);
             double num;
             ss >> num;
             values.push(num);
-        }
-        else if (current == '(') {
-            operators.push(current); // Push '(' onto the operator stack
-        }
-        else if (current == ')') {
+        } else if (token == '(') {
+            operators.push(token);
+        } else if (token == ')') {
             while (!operators.empty() && operators.top() != '(') {
-                double val2 = values.top();
-                values.pop();
-                double val1 = values.top();
-                values.pop();
-                char op = operators.top();
-                operators.pop();
-                values.push(applyOperator(val1, val2, op));
+                double b = values.top(); values.pop();
+                double a = values.top(); values.pop();
+                char op = operators.top(); operators.pop();
+                values.push(applyOperation(a, b, op));
             }
-            operators.pop(); // Pop the '('
-        }
-        else if (operatortype.find(current) != operatortype.end()) {
-            while (!operators.empty() && precedence(operators.top()) >= precedence(current)) {
-                double val2 = values.top();
-                values.pop();
-                double val1 = values.top();
-                values.pop();
-                char op = operators.top();
-                operators.pop();
-                values.push(applyOperator(val1, val2, op));
+            operators.pop();  // Remove '('
+        } else if (operatorType(token) > 0) {
+            while (!operators.empty() && operatorType(operators.top()) >= operatorType(token)) {
+                double b = values.top(); values.pop();
+                double a = values.top(); values.pop();
+                char op = operators.top(); operators.pop();
+                values.push(applyOperation(a, b, op));
             }
-            operators.push(current);
+            operators.push(token);
         }
     }
 
     while (!operators.empty()) {
-        double val2 = values.top();
-        values.pop();
-        double val1 = values.top();
-        values.pop();
-        char op = operators.top();
-        operators.pop();
-        values.push(applyOperator(val1, val2, op));
-    }
-
-    return values.top();
+        double b = values.top(); values.pop();
+        double a = values.top(); values.pop();
+        char op = operators.top(); operators.pop();
+        values.push(applyOperation(a, b, op));
+    } return values.top();
 }
